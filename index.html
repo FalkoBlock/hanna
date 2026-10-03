@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<script>/* Adresse ohne Schrägstrich am Ende: relative Pfade (Icon, Manifest) würden sonst in den Elternordner zeigen */
+if (/\.github\.io$/.test(location.hostname) && !/\/$|\.html$/.test(location.pathname)) location.replace(location.pathname + "/" + location.search);</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Übungen">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-rosa-180.png">
+<title>Übungen Markus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFFFFF; --ink: #000000; --muted: #7A7A7A; --line: #000000; --hair: #E6E6E6; --press: #F4F4F4; --ring: #CFCFCF;
+    --font: "Inter Tight", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #000000; --ink: #FFFFFF; --muted: #8C8C8C; --line: #FFFFFF; --hair: #262626; --press: #141414; --ring: #3D3D3D;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #000000; --ink: #FFFFFF; --muted: #8C8C8C; --line: #FFFFFF; --hair: #262626; --press: #141414; --ring: #3D3D3D;
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { height: 100%; -webkit-text-size-adjust: 100%; }
+  body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink);
+         font: 400 16px/1.4 var(--font); -webkit-font-smoothing: antialiased;
+         -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  /* ---------- Liste ---------- */
+  .wrap { max-width: 640px; margin: 0 auto; padding: 22px 20px 64px; }
+  .tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--hair); }
+  .tabs button { background: none; border: 0; padding: 10px 0 12px; margin-bottom: -1px; cursor: pointer;
+                 font-size: 15px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; }
+  .tabs button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+
+  header { padding: 44px 0 34px; }
+  h1 { margin: 0; font-size: clamp(42px, 12vw, 64px); font-weight: 600; line-height: .95; letter-spacing: -0.045em; }
+  .meta { display: flex; gap: 28px; margin-top: 22px; }
+  .meta div { display: flex; flex-direction: column; }
+  .meta b { font-size: 28px; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .meta span { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+  h2 { display: flex; justify-content: space-between; margin: 34px 0 0; padding-bottom: 10px;
+       border-bottom: 1px solid var(--line); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+  h2 small { font-size: 13px; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
+  h2.plain { margin-top: 0; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { border-bottom: 1px solid var(--hair); display: flex; align-items: flex-start; gap: 12px; }
+  .done .name, .done .dur, .done .dur small { color: var(--muted); }
+  .done .fig { opacity: .35; }
+  .prog { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 22px;
+          padding-top: 14px; border-top: 1px solid var(--hair); font-size: 15px; font-weight: 500; }
+  .link { background: none; border: 0; padding: 6px 0; font-size: 15px; font-weight: 500; color: var(--muted);
+          text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .pill { border: 0; border-radius: 22px; height: 42px; padding: 0 20px; background: var(--ink); color: var(--bg);
+          font-size: 15px; font-weight: 600; cursor: pointer; }
+  .pill.ghost { background: none; color: var(--ink); border: 1px solid var(--ink); }
+  .pill.ghost:active { background: var(--press); }
+  .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+           z-index: 20; display: flex; align-items: center; gap: 18px; padding: 0 8px 0 20px; height: 52px; border-radius: 26px;
+           background: var(--ink); color: var(--bg); font-size: 15px; font-weight: 500; white-space: nowrap;
+           box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+  .toast button { background: none; border: 0; color: var(--bg); font-weight: 700; padding: 0 12px; height: 40px; cursor: pointer;
+                  text-decoration: underline; text-underline-offset: 3px; }
+  .row { flex: 1; min-width: 0; width: 100%; display: grid; grid-template-columns: 60px 1fr auto; gap: 0 14px; align-items: center;
+         text-align: left; background: none; border: 0; padding: 16px 0; cursor: pointer; }
+  .row:active { background: var(--press); }
+  .num { align-self: start; padding-top: 3px; font-size: 12px; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .fig { width: 60px; height: 38px; color: var(--ink); }
+  .txt { min-width: 0; }
+  .name { display: block; font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+  .desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+          margin-top: 2px; color: var(--muted); font-size: 14px; line-height: 1.35; }
+  .dur small { display: block; margin-top: 3px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0; text-align: right; }
+  .dur { text-align: right; align-self: start; font-size: 17px; font-weight: 600; letter-spacing: -0.02em;
+         font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .fig polyline { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  .fig .l { stroke-width: 4.4; }
+  .fig .t { stroke-width: 6.6; }
+  .fig .w { stroke-width: 1.4; opacity: .45; }
+  .fig circle { fill: currentColor; }
+  .fig circle.o { fill: none; stroke: currentColor; stroke-width: 2; }
+
+  /* ---------- Timer ---------- */
+  .timer { position: fixed; inset: 0; z-index: 10; background: var(--bg); color: var(--ink); display: none;
+           flex-direction: column; padding: 0 22px calc(26px + env(safe-area-inset-bottom, 0px));
+           transition: background .25s, color .25s; }
+  .timer.open { display: flex; }
+  /* Seitenwechsel: Fläche invertiert, aus der Distanz erkennbar */
+  .timer.rest { background: var(--ink); color: var(--bg); }
+  .progress { position: absolute; left: 0; right: 0; top: env(safe-area-inset-top, 0px); height: 2px; background: var(--hair); }
+  .progress i { display: block; height: 100%; width: 0; background: currentColor; transition: width .1s linear; }
+  .t-top { padding-top: calc(26px + env(safe-area-inset-top, 0px)); display: flex; justify-content: space-between;
+           font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+  .t-top span:first-child { opacity: .55; }
+  .t-main { flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 600px; width: 100%; margin: 0 auto; }
+  .t-main .fig { width: 150px; height: 94px; color: currentColor; margin-bottom: 26px; }
+  .t-main h3 { margin: 0; font-size: 34px; font-weight: 600; letter-spacing: -0.035em; line-height: 1.05; }
+  .t-main p { margin: 10px 0 0; font-size: 17px; opacity: .6; max-width: 32ch; }
+  .time { margin-top: 30px; font-size: clamp(104px, 34vw, 180px); font-weight: 600; line-height: .85;
+          letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+  .time.target { font-size: clamp(56px, 18vw, 96px); line-height: .95; letter-spacing: -0.045em; }
+  .unit { margin-top: 10px; font-size: 19px; font-weight: 500; opacity: .6; }
+  .note { margin: 22px 0 0; font-size: 14px; color: var(--muted); max-width: 46ch; }
+  .timer.reps .progress { visibility: hidden; }
+  .timer.paused .time { opacity: .3; }
+  .actions { display: flex; gap: 10px; max-width: 600px; width: 100%; margin: 0 auto; }
+  .btn { flex: 1; height: 56px; border-radius: 28px; font-weight: 600; font-size: 17px; cursor: pointer; }
+  .primary { background: currentColor; border: 0; }
+  .primary span { color: var(--bg); }
+  .timer.rest .primary span { color: var(--ink); }
+  .secondary { background: none; border: 1px solid currentColor; }
+  .status { max-width: 600px; width: 100%; margin: 14px auto 0; font-size: 12px; opacity: .5; min-height: 1.3em; }
+
+  @media (prefers-reduced-motion: reduce) { .progress i, .timer { transition: none; } }
+
+
+
+
+
+
+
+  /* Abhak-Kreis: 44 px Trefferfläche, 28 px sichtbar */
+  .check { flex: none; width: 44px; height: 44px; margin: 7px 0 0 -8px; padding: 0; border: 0; background: none;
+           display: grid; place-items: center; cursor: pointer; }
+  .check .dot { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--ring); display: grid; place-items: center;
+                font-size: 11px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums;
+                transition: background .18s, border-color .18s, color .18s; }
+  .check svg { width: 12px; height: 12px; }
+  .done .check .dot { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  li { gap: 4px; }
+  .start { width: 100%; height: 56px; margin-top: 22px; border: 0; border-radius: 28px; background: var(--ink); color: var(--bg);
+           font-size: 17px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .start svg { width: 14px; height: 14px; fill: currentColor; }
+  .start:active { opacity: .85; }
+  .btn.skip[hidden] { display: none; }
+  .timer.lead .time { opacity: 1; }
+  /* Satz-/Serien-Segmente unter der Zahl */
+  .segs { display: flex; gap: 6px; margin-top: 24px; max-width: 340px; }
+  .segs i { flex: 1; height: 3px; border-radius: 2px; background: currentColor; opacity: .16; transition: opacity .2s; }
+  .segs i.on { opacity: 1; }
+  .segs i.cur { opacity: .5; }
+  .dash { display: inline-block; margin: 0 .09em; letter-spacing: 0; }
+  .meta b span.dash { font-size: inherit; color: inherit; margin: 0 .09em; }
+  .time.target { letter-spacing: -0.03em; }
+  .early { align-self: flex-start; margin-top: 16px; padding: 6px 0; background: none; border: 0; color: inherit; opacity: .65;
+           font-size: 15px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <nav class="tabs" id="tabs" aria-label="Block wählen"></nav>
+  <header>
+    <h1 id="title"></h1>
+    <div class="meta">
+      <div><b id="mCount"></b><span>Übungen</span></div>
+      <div id="mMinBox"><b id="mMin"></b><span>Minuten</span></div>
+    </div>
+    <p class="note" id="note" hidden></p>
+    <button type="button" class="start" id="startBtn"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.6v10.8c0 .7.8 1.1 1.4.7l8.1-5.4c.5-.4.5-1.1 0-1.4L4.4.9C3.8.5 3 .9 3 1.6z"/></svg><span id="startLabel">Block starten</span></button>
+    <div class="prog" id="prog" hidden><span id="progText"></span><button type="button" class="pill ghost" id="resetBtn">Zurücksetzen</button></div>
+  </header>
+  <div id="sections"></div>
+</main>
+
+<div class="toast" id="toast" hidden><span>Zurückgesetzt</span><button type="button" id="undoBtn">Rückgängig</button></div>
+
+<section class="timer" id="timer" aria-live="polite">
+  <div class="progress"><i id="bar"></i></div>
+  <div class="t-top"><span id="tSection"></span><span id="tPhase"></span></div>
+  <div class="t-main">
+    <svg class="fig" id="tFig" viewBox="0 0 80 50" aria-hidden="true"></svg>
+    <h3 id="tName"></h3>
+    <p id="tDesc"></p>
+    <div class="time" id="tTime">0:00</div>
+    <div class="unit" id="tUnit"></div>
+    <div class="segs" id="segs" hidden></div>
+    <button type="button" class="early" id="earlyBtn" hidden>Schon genug – Übung abschließen</button>
+  </div>
+  <div class="actions">
+    <button class="btn secondary" id="stopBtn" type="button"><span id="stopLabel">Abbrechen</span></button>
+    <button class="btn primary" id="pauseBtn" type="button"><span id="pauseLabel">Pause</span></button>
+    <button class="btn secondary skip" id="skipBtn" type="button" hidden>Nächste</button>
+  </div>
+  <div class="status" id="status"></div>
+</section>
+
+<script>
+(function () {
+  var P = {
+    // ---- Übungen Markus ----
+    stufe:      { h:[24,6],  t:"24,13 24,24", l:["24,26 24,36", "26,26 33,33 33,44", "26,16 29,24"], w:["4,36 28,36 28,44 76,44"] },
+    wandpad:    { h:[40,8],  t:"40,16 40,30", l:["28,8 28,18 52,18 52,8", "37.6,32 37.6,41", "42.4,32 42.4,41"], w:["30,42 50,42 50,46 30,46 30,42"] },
+    rueckheben: { h:[26,21], t:"22,33 40,42", l:["22,32 6,24", "40,43 74,43"] },
+    sitzvor:    { h:[18,13], t:"18,21 18,38", l:["20,42 60,42", "19,24 32,32"], w:["60,36 70,36", "66,32 70,36 66,40"] },
+    zehen:      { h:[40,6],  t:"40,13 40,27", l:["38,15 33,27", "42,15 47,27", "38,29 37,40", "42,29 43,40"], w:["4,44 76,44", "30,44 33,40 40,38.6 47,40 50,44"] },
+    gewoelbe:   { h:[40,6],  t:"40,13 40,27", l:["38,15 33,27", "42,15 47,27", "38,29 32,35 36,40", "42,29 48,35 44,40"], w:["4,44 76,44", "30,44 33,40 40,38.6 47,40 50,44"] },
+    band:       { h:[16,13], t:"16,21 16,38", l:["18,42 58,42 61,36", "17,24 30,30"], w:["30,30 61,35"] },
+    einbein:    { h:[40,6],  t:"40,13 40,28", l:["40,30 40,44", "42,30 52,30 52,40", "28,16 52,16"] },
+    rolle:      { h:[8,38],  t:"17,36 40,40", l:["17,35 8,26", "40,40 50,30 58,42"], o:[[24,41,3.6]] },
+    seitarm:    { h:[9,30], t:"19,26 43,38", l:["18,25 18,44", "17,22 7,12", "43,38 55,44 71,44"] },
+    massage:    { h:[34,6],  t:"34,13 34,28", l:["34,30 34,44", "36,30 46,37 54,37", "34,15 40,23"], o:[[56,41,3.4]] },
+    bett:       { h:[30,6],  t:"30,14 30,27", l:["30,29 44,29 44,42", "31,16 38,24"], w:["8,31 70,31", "10,31 10,44", "68,31 68,44"] },
+    sehne:      { h:[20,11], t:"20,19 20,38", l:["22,41 34,30 42,40", "21,22 40,38"], w:["4,44 76,44"] },
+    // ---- Stabi-Training im Sand ----
+    laufen:     { h:[42,6],  t:"40,13 40,27", l:["39,15 31,20 28,26", "41,15 48,20 54,15", "40,29 51,34 50,43", "40,29 31,37 23,35"], w:["4,45 76,45"] },
+    knieheb:    { h:[40,6],  t:"40,13 40,28", l:["40,30 40,44", "42,30 52,30 52,40", "39,15 32,22", "41,15 48,8"] },
+    zehengang:  { h:[40,5],  t:"40,12 40,26", l:["38,14 33,25", "42,14 47,25", "38.5,28 38.5,38 41,43", "41.5,28 41.5,38 44,43"], w:["4,45 76,45"] },
+    fersengang: { h:[40,6],  t:"40,13 40,27", l:["38,15 33,26", "42,15 47,26", "38.5,29 38.5,44 43,39", "41.5,29 41.5,44 46,39"], w:["4,45 76,45"] },
+    greifen:    { h:[18,10], t:"18,18 18,36", l:["20,40 32,29 40,41", "17,21 11,30 11,40"], w:["4,44 76,44", "44,44 52,44 52,40 48,40"] },
+    kurzfuss:   { h:[40,6],  t:"40,13 40,27", l:["38,15 33,27", "42,15 47,27", "37,29 35,44 31,44", "43,29 45,44 49,44"], w:["4,44.8 76,44.8"] },
+    tapping:    { h:[34,6],  t:"34,13 34,28", l:["34,30 34,44", "36,30 50,44", "22,16 46,16"], w:["4,45 76,45"] },
+    minibeuge:  { h:[38,7],  t:"36,14 38,28", l:["39,30 46,36 40,44", "37,30 26,34", "37,17 50,19"], w:["4,45 76,45"] },
+    climber:    { h:[11,21], t:"18,24 38,33", l:["18,25 18,44", "38,34 58,44", "37,34 28,38 34,44"], w:["4,45 76,45"] },
+    sprung:     { h:[40,5],  t:"40,12 40,24", l:["38,13 29,6", "42,13 51,6", "38,26 33,31 37,37", "42,26 47,31 43,37"], w:["24,46 56,46"] },
+    huepfer:    { h:[40,6],  t:"40,13 40,26", l:["41,28 43,34 41,39", "39,28 34,34 28,32", "39,15 32,21", "41,15 48,10"], w:["24,46 60,46"] },
+    absatz:     { h:[52,10], t:"52,17 52,30", l:["52,32 57,38 53,44", "53,32 60,34", "52,19 62,23"], w:["4,32 26,32 26,45 76,45"] }
+  };
+  function svgFig(d) {
+    var w = d.w ? (Array.isArray(d.w) ? d.w : [d.w]) : [];
+    return '<circle cx="' + d.h[0] + '" cy="' + d.h[1] + '" r="4.3"/>' +
+           '<polyline class="t" points="' + d.t + '"/>' +
+           d.l.map(function (pts) { return '<polyline class="l" points="' + pts + '"/>'; }).join("") +
+           w.map(function (pts) { return '<polyline class="w" points="' + pts + '"/>'; }).join("") +
+           (d.o || []).map(function (c) { return '<circle class="o" cx="' + c[0] + '" cy="' + c[1] + '" r="' + c[2] + '"/>'; }).join("");
+  }
+  var F = {};
+  Object.keys(P).forEach(function (k) { F[k] = svgFig(P[k]); });
+
+  // ---------- Blöcke → Abschnitte → Übungen ----------
+  // Zeitübung:          sec (Dauer je Satz), sets (Anzahl), optional rest (Sek.) + restLabel
+  // Wiederholungsübung: reps: { target, unit }  – zeigt die Vorgabe statt Countdown
+  var BLOCKS = [
+    { id: "markus", tab: "Markus", title: "Übungen Markus", sections: [
+      { title: "", items: [
+        { name: "Bein aus der Hüfte", desc: "An der Stufe das Bein hoch und runter bewegen.", reps: { target: "10×", unit: "je Seite" }, fig: "stufe" },
+        { name: "Wandkontakt auf Pad", desc: "Rücken, Po, Kopf und Arme an der Wand – seitlich bewegen.", sec: 30, sets: 2, fig: "wandpad" },
+        { name: "Oberkörper heben", desc: "Arme und Oberkörper nach oben (Isomatte).", reps: { target: "10–15×", unit: "" }, fig: "rueckheben" },
+        { name: "Beine / Hüfte vor", desc: "Beine bzw. Hüfte nach vorne bewegen (Boden).", reps: { target: "30×", unit: "" }, fig: "sitzvor" },
+        { name: "Große Zehen heben", desc: "Nur die großen Zehen anheben.", fig: "zehen" },
+        { name: "Fußgewölbe", desc: "Knie nach außen, Fuß anspannen, Zehen nicht krallen.", fig: "gewoelbe" },
+        { name: "Fuß flexen mit Band", desc: "Band um den Fuß, flexen und strecken, auf Spannung.", fig: "band" },
+        { name: "Einbeinstand", desc: "Hüfte gerade, Balance halten – Boden und Balance-Pad.", fig: "einbein" },
+        { name: "Blackroll Schulterblätter", desc: "Rückenlage, Rolle zwischen den Schulterblättern, Arme nach hinten.", fig: "rolle" },
+        { name: "Plank & Sideplank", desc: "Sideplank mit Arm über dem Kopf.", fig: "seitarm" },
+        { name: "Fuß massieren", desc: "Mit Blackroll und Massagepistole.", fig: "massage" },
+        { name: "Morgens Füße lösen", desc: "Nach dem Aufstehen dehnen und kreisen.", fig: "bett" },
+        { name: "Beugesehne massieren", desc: "Zehen nach hinten biegen, bis die Sehne sichtbar ist – dann massieren.", fig: "sehne" } ]}
+    ]},
+    { id: "sand", tab: "Stabi im Sand", title: "Stabi-Training im Sand", minutes: "30–40",
+      note: "Knie über dem 2.–3. Zeh, Füße gerade, Rumpf stabil. Lieber weniger Wiederholungen mit guter Technik.",
+      sections: [
+      { title: "Aufwärmen", items: [
+        { name: "Barfußlaufen im Sand", desc: "Locker vorwärts, rückwärts und seitwärts.", sec: 240, sets: 1, fig: "laufen" },
+        { name: "Fangspiel oder Lauf-ABC", desc: "Kniehebelauf, Anfersen, Seitgalopp.", reps: { target: "2–3", unit: "Elemente", count: 3, of: "Element", min: 2, rest: 0 }, fig: "knieheb" } ]},
+      { title: "Fußkräftigung", items: [
+        { name: "Zehengang", desc: "Auf den Zehen, langsam zurückgehen. Ferse hoch, Füße zeigen gerade nach vorn.", reps: { target: "3–4×", unit: "Bahnen à 8–10 m", count: 4, of: "Bahn", min: 3, rest: 0 }, fig: "zehengang" },
+        { name: "Fersengang", desc: "Auf den Fersen, Zehen hoch. Knie gestreckt, Körper aufrecht.", reps: { target: "3–4×", unit: "Bahnen à 8–10 m", count: 4, of: "Bahn", min: 3, rest: 0 }, fig: "fersengang" },
+        { name: "Zehen-Greifübungen", desc: "Kleine Gegenstände (Socken) mit den Zehen greifen, anheben, ablegen.", reps: { target: "2 × 6–8", unit: "je Fuß", count: 2, of: "Durchgang", min: 2, rest: 20 }, fig: "greifen" },
+        { name: "Kurzer Fuß", desc: "Hüftbreit stehen, Fußgewölbe anheben (Zehen lang lassen, nicht krallen), 5 s halten, lösen.", reps: { target: "2–3 × 8", unit: "je 5 s halten", count: 3, of: "Serie", min: 2, rest: 30 }, fig: "kurzfuss" } ]},
+      { title: "Statische Beinachse", items: [
+        { name: "Einbeinstand im Sand", desc: "Knie leicht gebeugt, Becken gerade. Steigerung: Augen schließen oder Arme bewegen.", sec: 25, sets: 6, restLabel: "Bein wechseln", fig: "einbein" },
+        { name: "Einbeinstand mit Zehen-Tapping", desc: "Freies Bein tippt vorne, seitlich und hinten in den Sand.", reps: { target: "2–3 Serien", unit: "je Bein, 3× alle Richtungen", count: 3, of: "Serie", min: 2, rest: 30 }, fig: "tapping" },
+        { name: "Einbeinige Mini-Kniebeugen", desc: "Knie beugen und strecken, Knie bleibt über dem 2.–3. Zeh, nicht nach innen fallen.", reps: { target: "2–3 × 8–10", unit: "je Bein", count: 3, of: "Serie", min: 2, rest: 30 }, fig: "minibeuge" } ]},
+      { title: "Dynamik", items: [
+        { name: "Mountain Climbers", desc: "Hoher Plank, Hände unter den Schultern. Knie abwechselnd zur Brust, Becken ruhig.", sec: 25, sets: 3, rest: 40, restLabel: "Pause", fig: "climber" },
+        { name: "Beidbeinige Sprünge", desc: "Klein vor, zurück und seitlich. Leise landen, Knie zeigen nach vorn.", reps: { target: "2–3 × 10", unit: "Sprünge", count: 3, of: "Serie", min: 2, rest: 30 }, fig: "sprung" },
+        { name: "Einbeinige Hüpfer", desc: "6–8 kleine Hüpfer vorwärts, nach jedem kurz stabil stehen, zurückgehen.", reps: { target: "2 Serien", unit: "je Bein", count: 2, of: "Serie", min: 2, rest: 30 }, fig: "huepfer" },
+        { name: "Niedersprünge", desc: "Einbeinig von einer 10–20 cm Kante in den Sand, auf demselben Bein stabil landen.", reps: { target: "2 × 6", unit: "je Bein", count: 2, of: "Serie", min: 2, rest: 30 }, fig: "absatz" } ]}
+    ]}
+  ];
+  var SWITCH_SEC = 5;   // Standardpause zwischen zwei Sätzen
+
+  var LEAD_SEC = 5;    // Vorlauf vor einer einzeln gestarteten Übung
+  var NEXT_SEC = 10;   // Vorlauf zwischen zwei Übungen im Durchlauf
+
+  function fmt(t) { var s = Math.ceil(Math.max(0, t)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+  function pad(n) { return String(n).padStart(2, "0"); }
+  // Bis-Strich in großen, eng gesetzten Zahlen etwas freistellen ("2–3" statt verschmolzen)
+  function rangeHTML(t) {
+    return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; })
+                    .replace(/\u2013/g, '<span class="dash">\u2013</span>');
+  }
+  // Seitenbasierte Übungen ("Seite/Bein wechseln") als "0:40 je Seite" statt "2 × 0:40"
+  function sideInfo(ex) {
+    var lbl = ex.restLabel || "Seite wechseln";
+    if (ex.sec && ex.sets > 1 && /wechseln/.test(lbl)) return { per: ex.sets / 2, unit: /^Bein/.test(lbl) ? "je Bein" : "je Seite" };
+    return null;
+  }
+  function durMain(ex) { var si = sideInfo(ex); var n = si ? si.per : ex.sets; return (n > 1 ? n + " \u00d7 " : "") + fmt(ex.sec); }
+  function durUnit(ex) { var si = sideInfo(ex); return si ? si.unit : ""; }
+
+  BLOCKS.forEach(function (b) {
+    b.count = 0; b.total = 0; b.items = [];
+    b.sections.forEach(function (s) { s.items.forEach(function (ex) {
+      ex.no = ++b.count; ex.key = b.id + "-" + ex.no; ex.block = b.id; ex.section = s.title || b.title;
+      b.items.push(ex);
+      if (ex.sec) b.total += ex.sec * ex.sets + (ex.sets - 1) * (ex.rest || SWITCH_SEC);
+      else b.untimed = true; }); });
+  });
+
+  var active = 0;
+  try { var saved = localStorage.getItem("block"); BLOCKS.forEach(function (b, i) { if (b.id === saved) active = i; }); } catch (e) {}
+
+  // ---------- Erledigt: je Block, Rücksetzen um Mitternacht (Ortszeit) oder manuell ----------
+  var DONE_KEY = "erledigt-v3", store = {};
+  try { store = JSON.parse(localStorage.getItem(DONE_KEY) || "{}") || {}; } catch (e) {}
+  function today() { var d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function doneOf(id) {
+    var e = store[id];
+    if (!e || e.date !== today()) e = store[id] = { date: today(), keys: {} };
+    return e.keys;
+  }
+  function saveDone() { try { localStorage.setItem(DONE_KEY, JSON.stringify(store)); } catch (e) {} }
+  function markDone(ex) { doneOf(ex.block)[ex.key] = true; saveDone(); }
+
+  var toast = document.getElementById("toast"), undoState = null, toastTimer = null;
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    var id = BLOCKS[active].id;
+    undoState = { id: id, keys: Object.assign({}, doneOf(id)) };
+    store[id] = { date: today(), keys: {} }; saveDone(); render();
+    toast.hidden = false; clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.hidden = true; undoState = null; }, 5000);
+  });
+  document.getElementById("undoBtn").addEventListener("click", function () {
+    if (undoState) { store[undoState.id] = { date: today(), keys: undoState.keys }; saveDone(); render(); }
+    undoState = null; toast.hidden = true; clearTimeout(toastTimer);
+  });
+  var CHECK = '<svg viewBox="0 0 12 12" aria-hidden="true"><polyline points="2.2,6.3 4.9,8.9 9.8,3.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  // ---------- Tabs ----------
+  var tabs = document.getElementById("tabs");
+  BLOCKS.forEach(function (b, i) {
+    var t = document.createElement("button"); t.type = "button"; t.textContent = b.tab;
+    t.addEventListener("click", function () {
+      active = i; try { localStorage.setItem("block", b.id); } catch (e) {}
+      render(); window.scrollTo(0, 0);
+    });
+    tabs.appendChild(t);
+  });
+  if (BLOCKS.length < 2) tabs.hidden = true;
+
+  // ---------- Liste ----------
+  var root = document.getElementById("sections");
+  function render() {
+    var B = BLOCKS[active], done = doneOf(B.id);
+    [].forEach.call(tabs.children, function (t, i) { t.setAttribute("aria-pressed", i === active ? "true" : "false"); });
+    document.getElementById("title").textContent = B.title;
+    document.getElementById("mCount").textContent = B.count;
+    var mins = B.minutes || (B.untimed ? "" : String(Math.round(B.total / 60)));
+    document.getElementById("mMin").innerHTML = rangeHTML(mins);
+    document.getElementById("mMinBox").hidden = !mins;
+    var note = document.getElementById("note");
+    note.textContent = B.note || ""; note.hidden = !B.note;
+    document.title = B.title;
+
+    var n = B.items.filter(function (ex) { return done[ex.key]; }).length, all = n === B.count;
+    document.getElementById("prog").hidden = n === 0;
+    document.getElementById("progText").textContent = all ? "Alles erledigt" : n + " von " + B.count + " erledigt";
+    var rb = document.getElementById("resetBtn");
+    rb.textContent = all ? "Neue Runde" : "Zurücksetzen"; rb.className = all ? "pill" : "pill ghost";
+    var sb = document.getElementById("startBtn");
+    sb.hidden = all;
+    document.getElementById("startLabel").textContent = n === 0 ? "Block starten" : "Fortsetzen";
+
+    root.textContent = "";
+    B.sections.forEach(function (s) {
+      var h = document.createElement("h2");
+      if (s.title) {
+        var label = document.createElement("span"); label.textContent = s.title;
+        var cnt = document.createElement("small"); cnt.textContent = pad(s.items.length);
+        h.append(label, cnt);
+      } else h.className = "plain";
+      root.appendChild(h);
+      var ul = document.createElement("ul");
+      s.items.forEach(function (ex) {
+        var li = document.createElement("li"), isDone = !!done[ex.key];
+        if (isDone) li.className = "done";
+        var c = document.createElement("button"); c.type = "button"; c.className = "check";
+        c.setAttribute("aria-label", ex.name + (isDone ? " als offen markieren" : " als erledigt markieren"));
+        c.innerHTML = '<span class="dot">' + (isDone ? CHECK : pad(ex.no)) + "</span>";
+        c.addEventListener("click", function () {
+          if (done[ex.key]) delete done[ex.key]; else done[ex.key] = true;
+          saveDone(); render();
+        });
+        var b = document.createElement("button"); b.type = "button"; b.className = "row";
+        b.innerHTML = '<svg class="fig" viewBox="0 0 80 50" aria-hidden="true">' + F[ex.fig] +
+          '</svg><span class="txt"><span class="name"></span><span class="desc"></span></span><span class="dur"></span>';
+        b.querySelector(".name").textContent = ex.name;
+        b.querySelector(".desc").textContent = ex.desc;
+        var d = b.querySelector(".dur"), main = "", unit = "";
+        if (ex.sec) { main = durMain(ex); unit = durUnit(ex); }
+        else if (ex.reps) { main = ex.reps.target; unit = ex.reps.unit; }
+        d.innerHTML = rangeHTML(main);
+        if (unit) { var u = document.createElement("small"); u.textContent = unit; d.appendChild(u); }
+        b.addEventListener("click", function () { run = null; begin(ex); });
+        li.append(c, b); ul.appendChild(li);
+      });
+      root.appendChild(ul);
+    });
+  }
+
+  // ---------- Display wach halten ----------
+  var wakeLock = null, statusEl = document.getElementById("status");
+  async function keepAwake() {
+    if (wakeLock) return;
+    if (!("wakeLock" in navigator)) { statusEl.textContent = "Display-Sperre kann hier nicht verhindert werden."; return; }
+    try {
+      wakeLock = await navigator.wakeLock.request("screen");
+      statusEl.textContent = "Display bleibt an";
+      wakeLock.addEventListener("release", function () { wakeLock = null; });
+    } catch (e) { statusEl.textContent = "Display-Sperre konnte nicht verhindert werden."; }
+  }
+  function allowSleep() { if (wakeLock) { wakeLock.release(); wakeLock = null; } }
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState !== "visible") return;
+    if (current) keepAwake(); else render();   // über Nacht offen gelassen: Tag neu prüfen
+  });
+
+  // ---------- Töne ----------
+  var ctx = null;
+  function primeAudio() {
+    try { if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state === "suspended") ctx.resume(); } catch (e) {}
+  }
+  function beep(count, freq, len) {
+    if (!ctx) return;
+    len = len || 0.2;
+    for (var i = 0; i < count; i++) {
+      var o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime + i * 0.25;
+      o.frequency.value = freq; o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.4, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+      o.start(t); o.stop(t + len + 0.02);
+    }
+  }
+
+  // ---------- Übungsansicht: Timer, Wiederholungen, Durchlauf ----------
+  var timerEl = document.getElementById("timer"), bar = document.getElementById("bar"),
+      tTime = document.getElementById("tTime"), tPhase = document.getElementById("tPhase"), tUnit = document.getElementById("tUnit"),
+      primaryBtn = document.getElementById("pauseBtn"), primaryLabel = document.getElementById("pauseLabel"),
+      stopLabel = document.getElementById("stopLabel"), skipBtn = document.getElementById("skipBtn");
+
+  var current = null, run = null, mode = "", phases = [], pi = 0, endTime = 0, remaining = 0,
+      paused = false, tick = null, lastWhole = 0, gen = 0;
+
+  var segsEl = document.getElementById("segs"), earlyBtn = document.getElementById("earlyBtn");
+  function renderSegs(total, doneN, cur) {
+    segsEl.textContent = ""; segsEl.hidden = total <= 1;
+    for (var i = 0; i < total; i++) {
+      var e = document.createElement("i");
+      if (i < doneN) e.className = "on"; else if (i === cur) e.className = "cur";
+      segsEl.appendChild(e);
+    }
+  }
+
+  function buildPhases(ex, leadLen, leadLabel) {
+    var p = [{ len: leadLen, label: leadLabel, rest: true }], si = sideInfo(ex);
+    for (var i = 1; i <= ex.sets; i++) {
+      var label;
+      if (si) label = (si.unit === "je Bein" ? "Bein " : "Seite ") + (i % 2 ? 1 : 2) + (si.per > 1 ? " \u00b7 Satz " + Math.ceil(i / 2) + "/" + si.per : "");
+      else label = ex.sets > 1 ? "Satz " + i + "/" + ex.sets : "";
+      p.push({ len: ex.sec, label: label, work: true });
+      if (i < ex.sets) p.push({ len: ex.rest || SWITCH_SEC, label: ex.restLabel || "Seite wechseln", rest: true });
+    }
+    return p;
+  }
+  function enterPhase(i) {
+    pi = i; remaining = phases[i].len; endTime = Date.now() + remaining * 1000; lastWhole = Math.ceil(remaining);
+    tPhase.textContent = phases[i].label;
+    timerEl.classList.toggle("rest", !!phases[i].rest);
+    var doneW = phases.slice(0, i).filter(function (x) { return x.work; }).length;
+    renderSegs(current.sets, doneW, phases[i].work ? doneW : -1);
+    draw();
+  }
+  function draw() {
+    tTime.textContent = fmt(remaining);
+    bar.style.width = ((1 - remaining / phases[pi].len) * 100) + "%";
+  }
+  function step() {
+    if (paused) return;
+    remaining = Math.max(0, (endTime - Date.now()) / 1000);
+    draw();
+    var whole = Math.ceil(remaining);
+    if (whole !== lastWhole) { lastWhole = whole; if (whole >= 1 && whole <= 3) beep(1, 520, 0.12); }
+    if (remaining <= 0) {
+      if (pi + 1 < phases.length) { beep(1, phases[pi + 1].rest ? 660 : 880); enterPhase(pi + 1); }
+      else finish();
+    }
+  }
+
+  function begin(ex) {
+    gen++; clearInterval(tick); tick = null;
+    current = ex; paused = false;
+    primeAudio(); keepAwake();
+    document.getElementById("tFig").innerHTML = F[ex.fig];
+    document.getElementById("tName").textContent = ex.name;
+    document.getElementById("tDesc").textContent = ex.desc;
+    document.getElementById("tSection").textContent = run
+      ? ex.section + " \u00b7 " + pad(run.i + 1) + "/" + pad(run.queue.length) : ex.section;
+    timerEl.classList.remove("paused", "rest", "reps");
+    timerEl.classList.add("open");
+    skipBtn.hidden = !run;
+    stopLabel.textContent = run ? "Beenden" : "Abbrechen";
+
+    earlyBtn.hidden = true; segsEl.hidden = true;
+    if (!ex.sec) {                                  // Wiederholungsübung: Vorgabe + Serienzähler
+      mode = "reps";
+      timerEl.classList.add("reps");
+      var R = ex.reps || {};
+      rep = { R: R, n: R.count || 1, min: R.min || R.count || 1, rest: R.rest || 0, done: 0, resting: false };
+      showRepState();
+      return;
+    }
+    mode = "timer";
+    tTime.classList.remove("target"); tUnit.textContent = "";
+    primaryLabel.textContent = "Pause";
+    var between = run && run.i > 0;
+    phases = buildPhases(ex, between ? NEXT_SEC : LEAD_SEC, between ? "Als Nächstes" : "Bereitmachen");
+    enterPhase(0);
+    tick = setInterval(step, 100);
+  }
+  var rep = null;
+  function repWord() { return rep.R.of || "Serie"; }
+  function showRepState() {
+    var R = rep.R, last = rep.done + 1 >= rep.n;
+    rep.resting = false;
+    timerEl.classList.remove("rest");
+    tTime.classList.add("target");
+    tTime.innerHTML = rangeHTML(R.target || "");
+    tUnit.textContent = R.target ? (R.unit || "") : "Nach Anleitung";
+    tPhase.textContent = rep.n > 1 ? repWord() + " " + (rep.done + 1) + " von " + rep.n : "";
+    primaryLabel.textContent = rep.n > 1 && !last ? repWord() + " geschafft" : "Fertig";
+    earlyBtn.hidden = !(rep.n > 1 && rep.done >= rep.min);
+    renderSegs(rep.n, rep.done, rep.done);
+  }
+  function startRepRest() {
+    rep.resting = true;
+    timerEl.classList.add("rest");
+    tTime.classList.remove("target");
+    tPhase.textContent = "Pause";
+    tUnit.textContent = "Dann " + repWord() + " " + (rep.done + 1) + " von " + rep.n;
+    primaryLabel.textContent = "Weiter";
+    earlyBtn.hidden = !(rep.done >= rep.min);
+    renderSegs(rep.n, rep.done, -1);
+    remaining = rep.rest; endTime = Date.now() + remaining * 1000; lastWhole = Math.ceil(remaining);
+    tTime.textContent = fmt(remaining);
+    tick = setInterval(function () {
+      remaining = Math.max(0, (endTime - Date.now()) / 1000);
+      tTime.textContent = fmt(remaining);
+      var whole = Math.ceil(remaining);
+      if (whole !== lastWhole) { lastWhole = whole; if (whole >= 1 && whole <= 3) beep(1, 520, 0.12); }
+      if (remaining <= 0) { beep(1, 880); endRepRest(); }
+    }, 100);
+  }
+  function endRepRest() { clearInterval(tick); tick = null; showRepState(); }
+  earlyBtn.addEventListener("click", function () {
+    if (!current) return;
+    clearInterval(tick); tick = null; markDone(current); next();
+  });
+
+  function next() {
+    if (run && run.i + 1 < run.queue.length) { run.i++; begin(run.queue[run.i]); }
+    else close();
+  }
+  function finish() {
+    clearInterval(tick); tick = null;
+    beep(2, 988);
+    markDone(current);
+    renderSegs(current.sets, current.sets, -1);
+    tPhase.textContent = ""; tTime.textContent = "Fertig";
+    var g = gen;
+    setTimeout(function () { if (g === gen && current) next(); }, 1200);
+  }
+  function close() {
+    gen++; clearInterval(tick); tick = null; current = null; run = null;
+    allowSleep(); statusEl.textContent = "";
+    timerEl.classList.remove("open", "rest", "reps", "paused");
+    render();
+  }
+
+  primaryBtn.addEventListener("click", function () {
+    if (!current) return;
+    if (mode === "reps") {
+      if (rep.resting) { endRepRest(); return; }
+      if (rep.done + 1 < rep.n) {
+        rep.done++; beep(1, 880);
+        if (rep.rest > 0) startRepRest(); else showRepState();
+        return;
+      }
+      markDone(current); next(); return;
+    }
+    if (!tick) return;
+    if (paused) { endTime = Date.now() + remaining * 1000; tPhase.textContent = phases[pi].label; }
+    else tPhase.textContent = "Pausiert";
+    paused = !paused;
+    primaryLabel.textContent = paused ? "Weiter" : "Pause";
+    timerEl.classList.toggle("paused", paused);
+  });
+  document.getElementById("stopBtn").addEventListener("click", close);
+  skipBtn.addEventListener("click", function () { if (current) next(); });
+  document.getElementById("startBtn").addEventListener("click", function () {
+    var B = BLOCKS[active], done = doneOf(B.id);
+    var queue = B.items.filter(function (ex) { return !done[ex.key]; });
+    if (!queue.length) return;
+    run = { queue: queue, i: 0 };
+    begin(queue[0]);
+  });
+
+  // ---------- Offline-Betrieb (nur auf der eigenen GitHub-Pages-Adresse) ----------
+  if ("serviceWorker" in navigator && location.protocol === "https:" && /\.github\.io$/.test(location.hostname)) {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
